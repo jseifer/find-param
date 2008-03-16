@@ -10,4 +10,7 @@ def self.find_by_param(*args)
   find_by_slug(*args)
 end
 
+You can also pass :raise_on_not_found => true to have it raise ActiveRecord::RecordNotFound
+if the result set is empty.
+
 Like I said, it's silly, but I find myself using this pattern a lot.
