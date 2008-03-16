@@ -1,0 +1,13 @@
+This is a silly plugin to let you take a shortcut.  Here's the blog post example:
+
+class Post < ActiveRecord::Base
+  define_find_param :slug
+end
+
+This will set the to_param to be post.slug and add the following method to the Post model:
+
+def self.find_by_param(*args)
+  find_by_slug(*args)
+end
+
+Like I said, it's silly, but I find myself using this pattern a lot.
