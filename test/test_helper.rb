@@ -28,5 +28,4 @@ ActiveRecord::Schema.define(:version => 1) do
 end
 
 class BlogPost < ActiveRecord::Base
-  define_find_param :slug
 end

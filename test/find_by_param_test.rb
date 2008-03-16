@@ -30,4 +30,11 @@ class FindByParamTest < Test::Unit::TestCase
     bp = BlogPost.find(:first, :conditions => {:slug => 'adam-west'})
     assert_equal bp.to_param, 'adam-west'
   end
+  
+  def test_raises_on_not_found_if_specified
+    BlogPost.send(:define_find_param, 'slug', :raise_on_not_found => true)
+    assert_raises ActiveRecord::RecordNotFound do
+      BlogPost.find_by_param('in ur tests, failing')
+    end
+  end
 end
