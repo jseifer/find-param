@@ -1,4 +1,20 @@
 module FindByParam
+  
+  ##
+  # Catch-all error for any issue arrising within the FindByParam plugin.
+  #
+  class Error < RuntimeError; end
+  
+  ##
+  # Raised when the param requested is not in the model's table definition.
+  # For example:
+  #
+  #     class WillRaiseError < ActiveRecord::Base
+  #       define_find_param :undefined_column
+  #     end
+  #
+  class ColumnNotFoundError < Error; end
+  
   module ClassMethods
     def define_find_param(param, options={})
       param = param.to_s
@@ -13,7 +29,7 @@ module FindByParam
         end
         self.class.send(:define_method, 'find_by_param', &bl)
       else
-        raise StandardError
+        raise ColumnNotFoundError
       end
       self.send(:include, FindByParam::InstanceMethods)
     end

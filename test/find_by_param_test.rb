@@ -38,4 +38,12 @@ class FindByParamTest < Test::Unit::TestCase
       BlogPost.find_by_param('in ur tests, failing')
     end
   end
+  
+  def test_raises_column_not_found_error_when_given_undefined_column
+    assert_raise(FindByParam::ColumnNotFoundError) do
+      BlogPost.send(:define_find_param, 'bad_column_name')
+    end
+    assert_kind_of FindByParam::Error, FindByParam::ColumnNotFoundError.new
+  end
+  
 end
