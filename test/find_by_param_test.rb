@@ -12,6 +12,7 @@ class FindByParamTest < Test::Unit::TestCase
   end
   
   def test_plugin_loaded_correctly
+    assert_kind_of FindByParam::ClassMethods, BlogPost
     assert BlogPost.respond_to?(:find_by_param)
   end
   
