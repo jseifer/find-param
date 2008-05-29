@@ -28,7 +28,9 @@ module FindByParam
         end
       end
 
-      self.send(:alias_method, :to_param, param)
+      define_method(:to_param) do
+        read_attribute(param)
+      end
 
       initialize_parameter(param, initialize_with, options) if initialize_with
     end
@@ -37,15 +39,14 @@ module FindByParam
       raise ColumnNotFoundError unless column_names.include?(source.to_s)
       using = options.delete(:using)
 
-      self.send(:define_method, :set_param) do
-        value = self.send(source)
+      define_method(:set_param) do
+        value = read_attribute(source)
         value = using.respond_to?(:call) ? using.call(value) : value.downcase.gsub(/[^\w]+/, '-')
-
-        self.send("#{param}=",  value)
+        write_attribute(param,  value)
       end
-      self.send(:private, :set_param)
+      private :set_param
 
-      self.send(:before_create, :set_param)
+      before_create(:set_param)
     end
     private :initialize_parameter
   end

@@ -2,9 +2,9 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 
 class FindByParamTest < Test::Unit::TestCase
   def setup
+    Post.find_param(:slug)
     Post.create(:slug => 'adam-west', :title => 'Adam West')
     Post.create(:slug => 'burt-ward', :title => 'Burt Ward')
-    Post.find_param(:slug)
   end
   
   def teardown
@@ -22,7 +22,7 @@ class FindByParamTest < Test::Unit::TestCase
   def test_find_by_param_is_defined_in_subclasses
     assert Blog.respond_to?(:find_by_param)
   end
-  
+
   def test_returns_valid_data
     post = Post.find_by_param('adam-west')
     assert_equal Post.find_by_slug('adam-west'), post
@@ -41,7 +41,7 @@ class FindByParamTest < Test::Unit::TestCase
   end
 
   def test_correctly_goes_to_param
-    post = Post.find(:first, :conditions => { :slug => 'adam-west' })
+    post = Post.find_by_slug('adam-west')
     assert_equal 'adam-west', post.to_param
   end
   
