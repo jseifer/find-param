@@ -1,16 +1,54 @@
-This is a silly plugin to let you take a shortcut.  Here's the blog post example:
+Find-Param
+==========
 
-class Post < ActiveRecord::Base
-  define_find_param :slug
-end
+This is a simple plugin to let you easily define a parameter to use for
+#to_param, and also define a finder to access that same parameter.
 
-This will set the to_param to be post.slug and add the following method to the Post model:
+This plugin is most useful for situations where you want to override the usage
+of ID as the default parameter value. Using a slug creates URLs that can be
+friendlier for humans and bots alike.
 
-def self.find_by_param(*args)
-  find_by_slug(*args)
-end
 
-You can also pass :raise_on_not_found => true to have it raise ActiveRecord::RecordNotFound
-if the result set is empty.
+Getting Started
+---------------
 
-Like I said, it's silly, but I find myself using this pattern a lot.
+Here we define the find param to be a slug:
+
+  class Post < ActiveRecord::Base
+    find_param :slug
+  end
+
+This will set the #to_param to be #slug and add a finder to the model called
+#find_by_param that can be used in your controllers to fetch records using
+params[:id].
+
+  class PostController
+    before_filter :find_post, :only => %(show edit update destroy)
+
+    def find_post
+      find_by_param(params[:id])
+    end
+  end
+
+
+Options
+-------
+
+To have your find param automatically populated on record creation, use the
+:initialize_with option.
+
+  class Post < ActiveRecord::Base
+    find_param :slug, :initialize_with => :title
+  end
+
+This will use the title property to populate the slug. By default this value is
+lowercased and all whitespace and special characters are replaced by hyphens.
+To specify your own formatted for the find param, there a :using option that
+accepts a proc.
+
+  class Post < ActiveRecord::Base
+    find_param :slug, :initialize_with => :title, :using => Proc.new { |value| value.upcase }
+  end
+
+You can also pass :raise_on_not_found => true to have it raise an
+ActiveRecord::RecordNotFound erorr when the result set is empty.
